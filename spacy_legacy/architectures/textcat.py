@@ -4,8 +4,8 @@ from thinc.api import chain, concatenate, clone, Dropout, ParametricAttention
 from thinc.api import Softmax, Maxout, reduce_sum, HashEmbed, with_array, uniqued
 from thinc.api import residual, expand_window
 from spacy.attrs import ID, ORTH, PREFIX, SUFFIX, SHAPE, LOWER
-from spacy.ml.models.staticvectors import StaticVectors
-from spacy.ml.models.featureextractor import FeatureExtractor
+from spacy.ml.staticvectors import StaticVectors
+from spacy.ml.featureextractor import FeatureExtractor
 from spacy.ml.models.textcat import build_bow_text_classifier
 
 
