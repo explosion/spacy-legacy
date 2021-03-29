@@ -2,7 +2,7 @@
 
 # spacy-legacy: Legacy functions and architectures for backwards compatibility
 
-This package includes outdated registered functions for [spaCy](https://spacy.io) v3.x, for example model architectures, pipeline components and utilities. It's **installed automatically** as a dependency of spaCy, and allows us to provide backwards compaitbility, while keeping the core library tidy and up to date. All of this happens under the hood, so you typically shouldn't have to care about this package.
+This package includes outdated registered functions for [spaCy](https://spacy.io) v3.x, for example model architectures, pipeline components and utilities. It's **installed automatically** as a dependency of spaCy, and allows us to provide backwards compatibility, while keeping the core library tidy and up to date. All of this happens under the hood, so you typically shouldn't have to care about this package.
 
 [![Azure Pipelines](https://img.shields.io/azure-devops/build/explosion-ai/public/21/master.svg?logo=azure-pipelines&style=flat-square&label=build)](https://dev.azure.com/explosion-ai/public/_build?definitionId=21)
 [![pypi Version](https://img.shields.io/pypi/v/spacy-legacy.svg?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/spacy-legacy/)
