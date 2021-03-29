@@ -7,7 +7,7 @@ from spacy.tokens import Doc
 
 def Tok2Vec_v1(
     embed: Model[List[Doc], List[Floats2d]],
-    encode: Model[List[Floats2d], List[Floats2d]],
+    encode: Model[Floats2d, Floats2d],
 ) -> Model[List[Doc], List[Floats2d]]:
     """Construct a tok2vec model out of embedding and encoding subnetworks.
     See https://explosion.ai/blog/deep-learning-formula-nlp
@@ -27,7 +27,7 @@ def Tok2Vec_v1(
 
 def MaxoutWindowEncoder_v1(
     width: int, window_size: int, maxout_pieces: int, depth: int
-) -> Model[List[Floats2d], List[Floats2d]]:
+) -> Model[Floats2d, Floats2d]:
     """Encode context using convolutions with maxout activation, layer
     normalization and residual connections.
 
@@ -58,7 +58,7 @@ def MaxoutWindowEncoder_v1(
 
 def MishWindowEncoder_v1(
     width: int, window_size: int, depth: int
-) -> Model[List[Floats2d], List[Floats2d]]:
+) -> Model[Floats2d, Floats2d]:
     """Encode context using convolutions with mish activation, layer
     normalization and residual connections.
 
