@@ -1,16 +1,12 @@
 from typing import List, Optional, Union
 from thinc.api import Model, chain, with_array, clone, residual, expand_window
-from thinc.api import concatenate, list2ragged, ragged2list, HashEmbed
-from thinc.api import Maxout, Mish
+from thinc.api import concatenate, list2ragged, ragged2list
 from thinc.types import Floats2d
 from spacy.attrs import intify_attr
 from spacy.errors import Errors
 from spacy.ml import _character_embed
-from spacy.ml.models import MaxoutWindowEncoder, build_Tok2Vec_model
-from spacy.ml.featureextractor import FeatureExtractor
 from spacy.tokens import Doc
-
-from ..layers.staticvectors_v1 import StaticVectors_v1
+from spacy.util import registry
 
 
 def Tok2Vec_v1(
@@ -48,6 +44,7 @@ def MaxoutWindowEncoder_v1(
         values are 2 or 3.
     depth (int): The number of convolutional layers. Recommended value is 4.
     """
+    Maxout = registry.get("layers", "Maxout.v1")
     cnn = chain(
         expand_window(window_size=window_size),
         Maxout(
@@ -77,6 +74,7 @@ def MishWindowEncoder_v1(
         to construct the convolution. Recommended value is 1.
     depth (int): The number of convolutional layers. Recommended value is 4.
     """
+    Mish = registry.get("layers", "Mish.v1")
     cnn = chain(
         expand_window(window_size=window_size),
         Mish(nO=width, nI=width * ((window_size * 2) + 1), dropout=0.0, normalize=True),
@@ -119,6 +117,9 @@ def HashEmbedCNN_v1(
         a language such as Chinese.
     pretrained_vectors (bool): Whether to also use static vectors.
     """
+    build_Tok2Vec_model = registry.get("architectures", "spacy.Tok2Vec.v2")
+    MultiHashEmbed = registry.get("architectures", "spacy.MultiHashEmbed.v1")
+    MaxoutWindowEncoder = registry.get("architectures", "spacy.MaxoutWindowEncoder.v2")
     if subword_features:
         attrs = ["NORM", "PREFIX", "SUFFIX", "SHAPE"]
         row_sizes = [embed_size, embed_size // 2, embed_size // 2, embed_size // 2]
@@ -126,7 +127,7 @@ def HashEmbedCNN_v1(
         attrs = ["NORM"]
         row_sizes = [embed_size]
     return build_Tok2Vec_model(
-        embed=MultiHashEmbed_v1(
+        embed=MultiHashEmbed(
             width=width,
             rows=row_sizes,
             attrs=attrs,
@@ -179,6 +180,11 @@ def MultiHashEmbed_v1(
     include_static_vectors (bool): Whether to also use static word vectors.
         Requires a vectors table to be loaded in the Doc objects' vocab.
     """
+    HashEmbed = registry.get("layers", "HashEmbed.v1")
+    FeatureExtractor = registry.get("layers", "spacy.FeatureExtractor.v1")
+    Maxout = registry.get("layers", "Maxout.v1")
+    StaticVectors = registry.get("layers", "spacy.StaticVectors.v1")
+
     if len(rows) != len(attrs):
         raise ValueError(f"Mismatched lengths: {len(rows)} vs {len(attrs)}")
     seed = 7
@@ -198,7 +204,7 @@ def MultiHashEmbed_v1(
                     list2ragged(),
                     with_array(concatenate(*embeddings)),
                 ),
-                StaticVectors_v1(width, dropout=0.0),
+                StaticVectors(width, dropout=0.0),
             ),
             with_array(Maxout(width, concat_size, nP=3, dropout=0.0, normalize=True)),
             ragged2list(),
@@ -249,19 +255,24 @@ def CharacterEmbed_v1(
     include_static_vectors (bool): Whether to also use static word vectors.
         Requires a vectors table to be loaded in the Doc objects' vocab.
     """
+    CharEmbed = registry.get("layers", "spacy.CharEmbed.v1")
+    FeatureExtractor = registry.get("layers", "spacy.FeatureExtractor.v1")
+    Maxout = registry.get("layers", "Maxout.v1")
+    HashEmbed = registry.get("layers", "HashEmbed.v1")
+    StaticVectors = registry.get("layers", "spacy.StaticVectors.v1")
     feature = intify_attr(feature)
     if feature is None:
         raise ValueError(Errors.E911(feat=feature))
     if include_static_vectors:
         model = chain(
             concatenate(
-                chain(_character_embed.CharacterEmbed(nM=nM, nC=nC), list2ragged()),
+                chain(CharEmbed(nM=nM, nC=nC), list2ragged()),
                 chain(
                     FeatureExtractor([feature]),
                     list2ragged(),
                     with_array(HashEmbed(nO=width, nV=rows, column=0, seed=5)),
                 ),
-                StaticVectors_v1(width, dropout=0.0),
+                StaticVectors(width, dropout=0.0),
             ),
             with_array(
                 Maxout(width, nM * nC + (2 * width), nP=3, normalize=True, dropout=0.0)
@@ -271,7 +282,7 @@ def CharacterEmbed_v1(
     else:
         model = chain(
             concatenate(
-                chain(_character_embed.CharacterEmbed(nM=nM, nC=nC), list2ragged()),
+                chain(CharEmbed(nM=nM, nC=nC), list2ragged()),
                 chain(
                     FeatureExtractor([feature]),
                     list2ragged(),
