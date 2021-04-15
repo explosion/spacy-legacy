@@ -255,7 +255,9 @@ def CharacterEmbed_v1(
     include_static_vectors (bool): Whether to also use static word vectors.
         Requires a vectors table to be loaded in the Doc objects' vocab.
     """
-    CharEmbed = registry.get("layers", "spacy.CharEmbed.v1")
+    # TODO: replace with registered layer after spacy v3.0.6
+    #CharEmbed = registry.get("layers", "spacy.CharEmbed.v1")
+    CharEmbed = _character_embed.CharacterEmbed
     FeatureExtractor = registry.get("layers", "spacy.FeatureExtractor.v1")
     Maxout = registry.get("layers", "Maxout.v1")
     HashEmbed = registry.get("layers", "HashEmbed.v1")
