@@ -184,7 +184,6 @@ def MultiHashEmbed_v1(
     FeatureExtractor = registry.get("layers", "spacy.FeatureExtractor.v1")
     Maxout = registry.get("layers", "Maxout.v1")
     StaticVectors = registry.get("layers", "spacy.StaticVectors.v1")
-
     if len(rows) != len(attrs):
         raise ValueError(f"Mismatched lengths: {len(rows)} vs {len(attrs)}")
     seed = 7
