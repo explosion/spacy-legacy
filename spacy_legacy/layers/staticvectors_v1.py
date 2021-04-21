@@ -1,10 +1,12 @@
 from typing import List, Tuple, Callable, Optional, cast
-from thinc.initializers import glorot_uniform_init
 from thinc.util import partial
 from thinc.types import Ragged, Floats2d, Floats1d
 from thinc.api import Model, Ops
 from spacy.tokens import Doc
 from spacy.errors import Errors
+from spacy.util import registry
+
+glorot_uniform_init = registry.initializers("glorot_uniform_init.v1")
 
 
 def StaticVectors_v1(

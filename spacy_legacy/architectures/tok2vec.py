@@ -1,6 +1,5 @@
 from typing import List, Optional, Union
-from thinc.api import Model, chain, with_array, clone, residual, expand_window
-from thinc.api import concatenate, list2ragged, ragged2list
+from thinc.api import Model
 from thinc.types import Floats2d
 from spacy.attrs import intify_attr
 from spacy.errors import Errors
@@ -21,6 +20,8 @@ def Tok2Vec_v1(
     encode (Model[List[Floats2d], List[Floats2d]]): Encode context into the
         embeddings, using an architecture such as a CNN, BiLSTM or transformer.
     """
+    chain = registry.get("layers", "chain.v1")
+    with_array = registry.get("layers", "with_array.v1")
     receptive_field = encode.attrs.get("receptive_field", 0)
     tok2vec = chain(embed, with_array(encode, pad=receptive_field))
     tok2vec.set_dim("nO", encode.get_dim("nO"))
@@ -45,6 +46,10 @@ def MaxoutWindowEncoder_v1(
     depth (int): The number of convolutional layers. Recommended value is 4.
     """
     Maxout = registry.get("layers", "Maxout.v1")
+    chain = registry.get("layers", "chain.v1")
+    expand_window = registry.get("layers", "expand_window.v1")
+    clone = registry.get("layers", "clone.v1")
+    residual = registry.get("layers", "residual.v1")
     cnn = chain(
         expand_window(window_size=window_size),
         Maxout(
@@ -75,6 +80,10 @@ def MishWindowEncoder_v1(
     depth (int): The number of convolutional layers. Recommended value is 4.
     """
     Mish = registry.get("layers", "Mish.v1")
+    chain = registry.get("layers", "chain.v1")
+    expand_window = registry.get("layers", "expand_window.v1")
+    clone = registry.get("layers", "clone.v1")
+    residual = registry.get("layers", "residual.v1")
     cnn = chain(
         expand_window(window_size=window_size),
         Mish(nO=width, nI=width * ((window_size * 2) + 1), dropout=0.0, normalize=True),
@@ -184,6 +193,11 @@ def MultiHashEmbed_v1(
     FeatureExtractor = registry.get("layers", "spacy.FeatureExtractor.v1")
     Maxout = registry.get("layers", "Maxout.v1")
     StaticVectors = registry.get("layers", "spacy.StaticVectors.v1")
+    chain = registry.get("layers", "chain.v1")
+    concatenate = registry.get("layers", "concatenate.v1")
+    list2ragged = registry.get("layers", "list2ragged.v1")
+    with_array = registry.get("layers", "with_array.v1")
+    ragged2list = registry.get("layers", "ragged2list.v1")
     if len(rows) != len(attrs):
         raise ValueError(f"Mismatched lengths: {len(rows)} vs {len(attrs)}")
     seed = 7
@@ -261,6 +275,11 @@ def CharacterEmbed_v1(
     Maxout = registry.get("layers", "Maxout.v1")
     HashEmbed = registry.get("layers", "HashEmbed.v1")
     StaticVectors = registry.get("layers", "spacy.StaticVectors.v1")
+    chain = registry.get("layers", "chain.v1")
+    concatenate = registry.get("layers", "concatenate.v1")
+    list2ragged = registry.get("layers", "list2ragged.v1")
+    with_array = registry.get("layers", "with_array.v1")
+    ragged2list = registry.get("layers", "ragged2list.v1")
     feature = intify_attr(feature)
     if feature is None:
         raise ValueError(Errors.E911(feat=feature))

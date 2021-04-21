@@ -1,12 +1,7 @@
 from typing import Optional
-from thinc.api import Model, Linear, list2ragged, Logistic
-from thinc.api import chain, concatenate, clone, Dropout, ParametricAttention
-from thinc.api import Softmax, Maxout, reduce_sum, HashEmbed, with_array, uniqued
-from thinc.api import residual, expand_window
+from thinc.api import Model
 from spacy.attrs import ID, ORTH, PREFIX, SUFFIX, SHAPE, LOWER
-from spacy.ml.staticvectors import StaticVectors
-from spacy.ml.featureextractor import FeatureExtractor
-from spacy.ml.models.textcat import build_bow_text_classifier
+from spacy.util import registry
 
 
 def TextCatEnsemble_v1(
@@ -21,6 +16,26 @@ def TextCatEnsemble_v1(
     nO: Optional[int] = None,
 ) -> Model:
     # Don't document this yet, I'm not sure it's right.
+    HashEmbed = registry.get("layers", "HashEmbed.v1")
+    FeatureExtractor = registry.get("layers", "spacy.FeatureExtractor.v1")
+    Maxout = registry.get("layers", "Maxout.v1")
+    StaticVectors = registry.get("layers", "spacy.StaticVectors.v1")
+    Softmax = registry.get("layers", "Softmax.v1")
+    Linear = registry.get("layers", "Linear.v1")
+    ParametricAttention = registry.get("layers", "ParametricAttention.v1")
+    Dropout = registry.get("layers", "Dropout.v1")
+    Logistic = registry.get("layers", "Logistic.v1")
+    build_bow_text_classifier = registry.get("architectures", "spacy.TextCatBOW.v1")
+    list2ragged = registry.get("layers", "list2ragged.v1")
+    chain = registry.get("layers", "chain.v1")
+    concatenate = registry.get("layers", "concatenate.v1")
+    clone = registry.get("layers", "clone.v1")
+    reduce_sum = registry.get("layers", "reduce_sum.v1")
+    with_array = registry.get("layers", "with_array.v1")
+    uniqued = registry.get("layers", "uniqued.v1")
+    residual = registry.get("layers", "residual.v1")
+    expand_window = registry.get("layers", "expand_window.v1")
+
     cols = [ORTH, LOWER, PREFIX, SUFFIX, SHAPE, ID]
     with Model.define_operators({">>": chain, "|": concatenate, "**": clone}):
         lower = HashEmbed(
