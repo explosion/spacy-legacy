@@ -1,7 +1,56 @@
-from typing import Optional
-from thinc.api import Model
+from typing import Optional, List
+from thinc.types import Floats2d
+from thinc.api import Model, Softmax, Linear, concatenate, ParametricAttention, reduce_mean
+from thinc.api import Logistic, chain, SparseLinear, with_cpu, softmax_activation
+from thinc.api import Maxout, LayerNorm, list2ragged, reduce_sum, residual, Dropout
 from spacy.attrs import ID, ORTH, PREFIX, SUFFIX, SHAPE, LOWER
 from spacy.util import registry
+from spacy.ml import extract_ngrams
+from spacy.ml.models.textcat import init_ensemble_textcat
+from spacy.tokens import Doc
+
+
+def TextCatCNN_v1(
+    tok2vec: Model, exclusive_classes: bool, nO: Optional[int] = None
+) -> Model[List[Doc], Floats2d]:
+    """
+    Build a simple CNN text classifier, given a token-to-vector model as inputs.
+    If exclusive_classes=True, a softmax non-linearity is applied, so that the
+    outputs sum to 1. If exclusive_classes=False, a logistic non-linearity
+    is applied instead, so that outputs are in the range [0, 1].
+    """
+    with Model.define_operators({">>": chain}):
+        cnn = tok2vec >> list2ragged() >> reduce_mean()
+        if exclusive_classes:
+            output_layer = Softmax(nO=nO, nI=tok2vec.maybe_get_dim("nO"))
+            model = cnn >> output_layer
+            model.set_ref("output_layer", output_layer)
+        else:
+            linear_layer = Linear(nO=nO, nI=tok2vec.maybe_get_dim("nO"))
+            model = cnn >> linear_layer >> Logistic()
+            model.set_ref("output_layer", linear_layer)
+    model.set_ref("tok2vec", tok2vec)
+    model.set_dim("nO", nO)
+    model.attrs["multi_label"] = not exclusive_classes
+    return model
+
+
+def TextCatBOW_v1(
+    exclusive_classes: bool,
+    ngram_size: int,
+    no_output_layer: bool,
+    nO: Optional[int] = None,
+) -> Model[List[Doc], Floats2d]:
+    with Model.define_operators({">>": chain}):
+        sparse_linear = SparseLinear(nO)
+        model = extract_ngrams(ngram_size, attr=ORTH) >> sparse_linear
+        model = with_cpu(model, model.ops)
+        if not no_output_layer:
+            output_layer = softmax_activation() if exclusive_classes else Logistic()
+            model = model >> with_cpu(output_layer, output_layer.ops)
+    model.set_ref("output_layer", sparse_linear)
+    model.attrs["multi_label"] = not exclusive_classes
+    return model
 
 
 def TextCatEnsemble_v1(
@@ -117,4 +166,44 @@ def TextCatEnsemble_v1(
         model.set_dim("nO", nO)
     model.set_ref("output_layer", linear_model.get_ref("output_layer"))
     model.attrs["multi_label"] = not exclusive_classes
+    return model
+
+
+def TextCatEnsemble_v2(
+    tok2vec: Model[List[Doc], List[Floats2d]],
+    linear_model: Model[List[Doc], Floats2d],
+    nO: Optional[int] = None,
+) -> Model[List[Doc], Floats2d]:
+    exclusive_classes = not linear_model.attrs["multi_label"]
+    with Model.define_operators({">>": chain, "|": concatenate}):
+        width = tok2vec.maybe_get_dim("nO")
+        attention_layer = ParametricAttention(
+            width
+        )  # TODO: benchmark performance difference of this layer
+        maxout_layer = Maxout(nO=width, nI=width)
+        norm_layer = LayerNorm(nI=width)
+        cnn_model = (
+            tok2vec
+            >> list2ragged()
+            >> attention_layer
+            >> reduce_sum()
+            >> residual(maxout_layer >> norm_layer >> Dropout(0.0))
+        )
+
+        nO_double = nO * 2 if nO else None
+        if exclusive_classes:
+            output_layer = Softmax(nO=nO, nI=nO_double)
+        else:
+            output_layer = Linear(nO=nO, nI=nO_double) >> Logistic()
+        model = (linear_model | cnn_model) >> output_layer
+        model.set_ref("tok2vec", tok2vec)
+    if model.has_dim("nO") is not False:
+        model.set_dim("nO", nO)
+    model.set_ref("output_layer", linear_model.get_ref("output_layer"))
+    model.set_ref("attention_layer", attention_layer)
+    model.set_ref("maxout_layer", maxout_layer)
+    model.set_ref("norm_layer", norm_layer)
+    model.attrs["multi_label"] = not exclusive_classes
+
+    model.init = init_ensemble_textcat
     return model
