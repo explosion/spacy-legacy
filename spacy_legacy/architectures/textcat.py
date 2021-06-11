@@ -1,13 +1,12 @@
 from typing import Optional, List
 from thinc.types import Floats2d
-from thinc.api import Model, Softmax, Linear, concatenate, ParametricAttention, reduce_mean
-from thinc.api import Logistic, chain, SparseLinear, with_cpu, softmax_activation
-from thinc.api import Maxout, LayerNorm, list2ragged, reduce_sum, residual, Dropout
+from thinc.api import Model, with_cpu
 from spacy.attrs import ID, ORTH, PREFIX, SUFFIX, SHAPE, LOWER
 from spacy.util import registry
-from spacy.ml import extract_ngrams
-from spacy.ml.models.textcat import init_ensemble_textcat
 from spacy.tokens import Doc
+
+# TODO: replace with registered layer after spacy v3.0.7
+from spacy.ml import extract_ngrams
 
 
 def TextCatCNN_v1(
@@ -19,6 +18,15 @@ def TextCatCNN_v1(
     outputs sum to 1. If exclusive_classes=False, a logistic non-linearity
     is applied instead, so that outputs are in the range [0, 1].
     """
+    chain = registry.get("layers", "chain.v1")
+    reduce_mean = registry.get("layers", "reduce_mean.v1")
+    Logistic = registry.get("layers", "Logistic.v1")
+    Softmax = registry.get("layers", "Softmax.v1")
+    Linear = registry.get("layers", "Linear.v1")
+    list2ragged = registry.get("layers", "list2ragged.v1")
+
+    # extract_ngrams = registry.get("layers", "spacy.extract_ngrams.v1")
+
     with Model.define_operators({">>": chain}):
         cnn = tok2vec >> list2ragged() >> reduce_mean()
         if exclusive_classes:
@@ -41,6 +49,11 @@ def TextCatBOW_v1(
     no_output_layer: bool,
     nO: Optional[int] = None,
 ) -> Model[List[Doc], Floats2d]:
+    chain = registry.get("layers", "chain.v1")
+    Logistic = registry.get("layers", "Logistic.v1")
+    SparseLinear = registry.get("layers", "SparseLinear.v1")
+    softmax_activation = registry.get("layers", "softmax_activation.v1")
+
     with Model.define_operators({">>": chain}):
         sparse_linear = SparseLinear(nO)
         model = extract_ngrams(ngram_size, attr=ORTH) >> sparse_linear
