@@ -3,7 +3,6 @@ from thinc.api import Model
 from thinc.types import Floats2d
 from spacy.attrs import intify_attr
 from spacy.errors import Errors
-from spacy.ml import _character_embed
 from spacy.tokens import Doc
 from spacy.util import registry
 
@@ -268,9 +267,7 @@ def CharacterEmbed_v1(
     include_static_vectors (bool): Whether to also use static word vectors.
         Requires a vectors table to be loaded in the Doc objects' vocab.
     """
-    # TODO: replace with registered layer after spacy v3.0.6
-    #CharEmbed = registry.get("layers", "spacy.CharEmbed.v1")
-    CharEmbed = _character_embed.CharacterEmbed
+    CharEmbed = registry.get("layers", "spacy.CharEmbed.v1")
     FeatureExtractor = registry.get("layers", "spacy.FeatureExtractor.v1")
     Maxout = registry.get("layers", "Maxout.v1")
     HashEmbed = registry.get("layers", "HashEmbed.v1")
