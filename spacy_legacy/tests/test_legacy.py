@@ -6,13 +6,16 @@ FUNCTIONS = [
     ("architectures", "Tok2Vec.v1"),
     ("architectures", "MaxoutWindowEncoder.v1"),
     ("architectures", "MishWindowEncoder.v1"),
+    ("architectures", "TextCatBOW.v1"),
+    ("architectures", "TextCatCNN.v1"),
     ("architectures", "TextCatEnsemble.v1"),
     ("architectures", "HashEmbedCNN.v1"),
     ("architectures", "MultiHashEmbed.v1"),
     ("architectures", "CharacterEmbed.v1"),
     ("loggers", "WandbLogger.v1"),
-    ("layers", "StaticVectors.v1")
+    ("layers", "StaticVectors.v1"),
 ]
+
 
 @pytest.mark.parametrize("package", PACKAGES)
 @pytest.mark.parametrize("reg_name,name", FUNCTIONS)
