@@ -12,8 +12,7 @@ from spacy.ml._precomputable_affine import PrecomputableAffine
 from spacy.ml.tb_framework import TransitionModel
 
 
-@registry.architectures.register("spacy.TransitionBasedParser.v1")
-def transition_parser_v1(
+def TransitionBasedParser_v1(
     tok2vec: Model[List[Doc], List[Floats2d]],
     state_type: Literal["parser", "ner"],
     extra_state_tokens: bool,
