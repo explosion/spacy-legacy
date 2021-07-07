@@ -10,6 +10,7 @@ from spacy.util import registry
 # TODO: replace with registered layers after spacy is released with the update
 from spacy.ml._precomputable_affine import PrecomputableAffine
 from spacy.ml.tb_framework import TransitionModel
+from spacy.ml.models.parser import resize_output
 
 
 def TransitionBasedParser_v1(
@@ -47,4 +48,4 @@ def TransitionBasedParser_v1(
             upper = Linear(nO=nO, init_W=zero_init)
     else:
         upper = None
-    return TransitionModel(tok2vec, lower, upper)
+    return TransitionModel(tok2vec, lower, upper, resize_output)
