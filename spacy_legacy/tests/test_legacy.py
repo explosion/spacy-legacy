@@ -13,7 +13,6 @@ FUNCTIONS = [
     ("architectures", "TextCatEnsemble.v1"),
     ("architectures", "Tok2Vec.v1"),
     ("layers", "StaticVectors.v1"),
-    ("loggers", "WandbLogger.v1"),
 ]
 
 
