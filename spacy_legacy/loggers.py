@@ -13,7 +13,7 @@ def wandb_logger_v1(project_name: str, remove_config_values: List[str] = []):
     except ImportError:
         raise ImportError(Errors.E880)
 
-    console_logger = registry.get("layers", "spacy.ConsoleLogger.v1")
+    console_logger = registry.get("loggers", "spacy.ConsoleLogger.v1")
     console = console_logger(progress_bar=False)
 
     def setup_logger(
