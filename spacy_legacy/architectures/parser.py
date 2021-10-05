@@ -7,10 +7,6 @@ from spacy.compat import Literal
 from spacy.errors import Errors
 from spacy.util import registry
 
-# TODO: replace with registered layers after spacy is released with the update
-from spacy.ml._precomputable_affine import PrecomputableAffine
-from spacy.ml.tb_framework import TransitionModel
-
 
 def TransitionBasedParser_v1(
     tok2vec: Model[List[Doc], List[Floats2d]],
@@ -25,6 +21,8 @@ def TransitionBasedParser_v1(
     chain = registry.get("layers", "chain.v1")
     list2array = registry.get("layers", "list2array.v1")
     Linear = registry.get("layers", "Linear.v1")
+    TransitionModel = registry.get("layers", "spacy.TransitionModel.v1")
+    PrecomputableAffine = registry.get("layers", "spacy.PrecomputableAffine.v1")
 
     if state_type == "parser":
         nr_feature_tokens = 13 if extra_state_tokens else 8
