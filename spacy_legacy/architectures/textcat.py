@@ -5,9 +5,6 @@ from spacy.attrs import ID, ORTH, PREFIX, SUFFIX, SHAPE, LOWER
 from spacy.util import registry
 from spacy.tokens import Doc
 
-# TODO: replace with registered layer after spacy v3.0.7
-from spacy.ml import extract_ngrams
-
 
 def TextCatCNN_v1(
     tok2vec: Model, exclusive_classes: bool, nO: Optional[int] = None
@@ -24,8 +21,6 @@ def TextCatCNN_v1(
     Softmax = registry.get("layers", "Softmax.v1")
     Linear = registry.get("layers", "Linear.v1")
     list2ragged = registry.get("layers", "list2ragged.v1")
-
-    # extract_ngrams = registry.get("layers", "spacy.extract_ngrams.v1")
 
     with Model.define_operators({">>": chain}):
         cnn = tok2vec >> list2ragged() >> reduce_mean()
@@ -53,6 +48,7 @@ def TextCatBOW_v1(
     Logistic = registry.get("layers", "Logistic.v1")
     SparseLinear = registry.get("layers", "SparseLinear.v1")
     softmax_activation = registry.get("layers", "softmax_activation.v1")
+    extract_ngrams = registry.get("layers", "spacy.extract_ngrams.v1")
 
     with Model.define_operators({">>": chain}):
         sparse_linear = SparseLinear(nO)
