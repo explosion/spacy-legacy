@@ -1,7 +1,11 @@
 import pytest
 from spacy.tests import util
-from ..architectures.tok2vec import Tok2Vec_v1, MultiHashEmbed_v1, CharacterEmbed_v1
-from ..architectures.tok2vec import MaxoutWindowEncoder_v1, MishWindowEncoder_v1, HashEmbedCNN_v1
+from ...architectures.tok2vec import Tok2Vec_v1, MultiHashEmbed_v1, CharacterEmbed_v1
+from ...architectures.tok2vec import (
+    MaxoutWindowEncoder_v1,
+    MishWindowEncoder_v1,
+    HashEmbedCNN_v1,
+)
 
 
 @pytest.mark.parametrize(
