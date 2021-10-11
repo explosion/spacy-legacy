@@ -9,7 +9,7 @@ from ..layers.staticvectors_v1 import StaticVectors_v1
 def test_static_vector_v1(model_func, kwargs):
     nlp = English()
     model = model_func(**kwargs).initialize()
-    # Test the layer can be called successfully with 0, 1 and 2 empty docs.
+    # Test that the layer can be called successfully with 0, 1 and 2 empty docs.
     for n_docs in range(3):
         docs = [nlp("") for _ in range(n_docs)]
         # Test predict
