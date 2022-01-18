@@ -1,7 +1,7 @@
 from typing import Optional, Iterable, Callable, Dict, Union, List, Any
 from itertools import islice
-from thinc.api import Optimizer
-from thinc.api import set_dropout_rate
+from thinc.api import Model, Optimizer, set_dropout_rate
+from thinc.types import Floats2d
 
 import warnings
 
@@ -11,6 +11,7 @@ from spacy.vocab import Vocab
 from spacy.training import Example, validate_examples, validate_get_examples
 from spacy.errors import Errors, Warnings
 from spacy.util import registry
+from spacy.tokens import Doc
 
 def EntityLinker_v1(
     tok2vec: Model, nO: Optional[int] = None
