@@ -1,6 +1,8 @@
+from spacy.util import registry
 from thinc.api import Model, normal_init
 
 
+@registry.layers("spacy.PrecomputableAffine.v1")
 def PrecomputableAffine_v1(nO, nI, nF, nP, dropout=0.1):
     model = Model(
         "precomputable_affine",

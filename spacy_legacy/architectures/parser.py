@@ -7,7 +7,7 @@ from spacy.compat import Literal
 from spacy.errors import Errors
 from spacy.util import registry
 
-from .tb_framework import TransitionModel_v1
+from ..layers.tb_framework import TransitionModel_v1
 
 
 def TransitionBasedParser_v1(
@@ -23,7 +23,7 @@ def TransitionBasedParser_v1(
     chain = registry.get("layers", "chain.v1")
     list2array = registry.get("layers", "list2array.v1")
     Linear = registry.get("layers", "Linear.v1")
-    PrecomputableAffine = registry.get("layers", "spacy.PrecomputableAffine.v1")
+    PrecomputableAffine = registry.get("layers", "spacy_legacy.PrecomputableAffine.v1")
 
     if state_type == "parser":
         nr_feature_tokens = 13 if extra_state_tokens else 8
