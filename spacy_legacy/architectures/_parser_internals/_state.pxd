@@ -6,7 +6,6 @@ cimport libcpp
 from libcpp.vector cimport vector
 from libcpp.set cimport set
 from cpython.exc cimport PyErr_CheckSignals, PyErr_SetFromErrno
-from murmurhash.mrmr cimport hash64
 from spacy.vocab cimport EMPTY_LEXEME
 from spacy.structs cimport TokenC, SpanC
 from spacy.lexeme cimport Lexeme
