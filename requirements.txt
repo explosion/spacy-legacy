@@ -1,5 +1,8 @@
+# Our libraries
+spacy>=3.1.0
+# Third-party dependencies
+numpy>=1.15.0
+wandb
 # Development requirements
 cython>=0.25,<3.0
-spacy>=3.1.0
 pytest>=5.0.1
-wandb
