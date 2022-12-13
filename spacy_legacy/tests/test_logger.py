@@ -1,5 +1,5 @@
 import pytest
-from ..loggers import wandb_logger_v1
+from spacy_legacy.loggers import wandb_logger_v1
 
 
 def test_logger():
