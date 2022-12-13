@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING, Dict, Any, Tuple, Callable, List, Optional, IO
 import sys
 
 from spacy import util
-from spacy.errors import Errors
 from spacy.util import registry
 from wasabi import Printer
 import tqdm
@@ -16,7 +15,11 @@ def wandb_logger_v1(project_name: str, remove_config_values: List[str] = []):
         import wandb
         from wandb import init, log, join  # test that these are available
     except ImportError:
-        raise ImportError(Errors.E880)
+        err_msg = ("The 'wandb' library could not be found - did you install "
+                   "it? Alternatively, specify the 'ConsoleLogger' in the "
+                   "'training.logger' config section, instead of the "
+                   "'WandbLogger'.")
+        raise ImportError(err_msg)
 
     console_logger = registry.get("loggers", "spacy.ConsoleLogger.v1")
     console = console_logger(progress_bar=False)
