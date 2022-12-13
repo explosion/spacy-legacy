@@ -1,6 +1,6 @@
 import pytest
 from spacy.lang.en import English
-from ..layers.staticvectors_v1 import StaticVectors_v1
+from spacy_legacy.layers.staticvectors_v1 import StaticVectors_v1
 
 
 @pytest.mark.parametrize(
