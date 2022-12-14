@@ -142,7 +142,7 @@ def score_cats_v1(
 
 
 def textcat_score_v1(examples: Iterable[Example], **kwargs) -> Dict[str, Any]:
-    score_cats_v1(
+    return score_cats_v1(
         examples,
         "cats",
         multi_label=False,
