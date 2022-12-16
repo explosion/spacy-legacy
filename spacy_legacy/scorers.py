@@ -152,3 +152,18 @@ def textcat_score_v1(examples: Iterable[Example], **kwargs) -> Dict[str, Any]:
 
 def make_textcat_scorer_v1():
     return textcat_score_v1
+
+
+def textcat_multilabel_score_v1(
+    examples: Iterable[Example], **kwargs
+) -> Dict[str, Any]:
+    return score_cats_v1(
+        examples,
+        "cats",
+        multi_label=True,
+        **kwargs,
+    )
+
+
+def make_textcat_multilabel_scorer_v1():
+    return textcat_multilabel_score_v1
