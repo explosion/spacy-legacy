@@ -15,6 +15,7 @@ FUNCTIONS = [
     ("architectures", "Tok2Vec.v1"),
     ("layers", "StaticVectors.v1"),
     ("loggers", "ConsoleLogger.v1"),
+    ("loggers", "ConsoleLogger.v2"),
     ("loggers", "WandbLogger.v1"),
     ("scorers", "textcat_multilabel_scorer.v1"),
     ("scorers", "textcat_scorer.v1"),

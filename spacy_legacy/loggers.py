@@ -1,6 +1,7 @@
-from typing import TYPE_CHECKING, Dict, Any, Tuple, Callable, List, Optional, IO
+from typing import TYPE_CHECKING, Dict, Any, Tuple, Callable, List, Optional, IO, Union
 import sys
 
+from pathlib import Path
 from spacy import util
 from spacy.util import registry
 from wasabi import Printer
@@ -15,10 +16,12 @@ def wandb_logger_v1(project_name: str, remove_config_values: List[str] = []):
         import wandb
         from wandb import init, log, join  # test that these are available
     except ImportError:
-        err_msg = ("The 'wandb' library could not be found - did you install "
-                   "it? Alternatively, specify the 'ConsoleLogger' in the "
-                   "'training.logger' config section, instead of the "
-                   "'WandbLogger'.")
+        err_msg = (
+            "The 'wandb' library could not be found - did you install "
+            "it? Alternatively, specify the 'ConsoleLogger' in the "
+            "'training.logger' config section, instead of the "
+            "'WandbLogger'."
+        )
         raise ImportError(err_msg)
 
     console_logger = registry.get("loggers", "spacy.ConsoleLogger.v1")
@@ -67,6 +70,24 @@ def setup_table(
         final_cols.append(col.upper())
         final_widths.append(max(len(col), width))
     return final_cols, final_widths, ["r" for _ in final_widths]
+
+
+def console_logger_v2(
+    progress_bar: bool = False,
+    console_output: bool = True,
+    output_file: Optional[Union[str, Path]] = None,
+):
+    """The ConsoleLogger.v2 prints out training logs in the console and/or saves them to a jsonl file.
+    progress_bar (bool): Whether the logger should print a progress bar tracking the steps till the next evaluation pass.
+    console_output (bool): Whether the logger should print the logs on the console.
+    output_file (Optional[Union[str, Path]]): The file to save the training logs to.
+    """
+    console_logger = registry.get("loggers", "spacy.ConsoleLogger.v3")
+    return console_logger(
+        progress_bar=None if progress_bar is False else "eval",
+        console_output=console_output,
+        output_file=output_file,
+    )
 
 
 def console_logger_v1(progress_bar: bool = False):
