@@ -3,6 +3,7 @@ import sys
 
 from pathlib import Path
 from spacy import util
+from spacy.errors import Errors
 from spacy.util import registry
 from wasabi import Printer
 import tqdm
