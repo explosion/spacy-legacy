@@ -1,9 +1,8 @@
-from typing import Optional, List
+from typing import Optional, List, Literal
 from thinc.types import Floats2d
 from thinc.api import Model, zero_init, use_ops
 
 from spacy.tokens import Doc
-from spacy.compat import Literal
 from spacy.errors import Errors
 from spacy.util import registry
 
