@@ -46,7 +46,7 @@ def forward(
     except ValueError:
         raise RuntimeError(Errors.E896)
     output = Ragged(
-        vectors_data, model.ops.asarray([len(doc) for doc in docs], dtype="i")
+        vectors_data, model.ops.asarray([len(doc) for doc in docs], dtype="i")  # type: ignore[arg-type]
     )
     mask = None
     if is_train:
@@ -59,7 +59,7 @@ def forward(
             d_output.data *= mask
         model.inc_grad(
             "W",
-            model.ops.gemm(d_output.data, model.ops.as_contig(V[rows]), trans1=True),
+            model.ops.gemm(d_output.data, model.ops.as_contig(V[rows]), trans1=True),  # type: ignore[arg-type]
         )
         return []
 
@@ -94,4 +94,4 @@ def _handle_empty(ops: Ops, nO: int):
 
 
 def _get_drop_mask(ops: Ops, nO: int, rate: Optional[float]) -> Optional[Floats1d]:
-    return ops.get_dropout_mask((nO,), rate) if rate is not None else None
+    return ops.get_dropout_mask((nO,), rate) if rate is not None else None  # type: ignore[return-value]
