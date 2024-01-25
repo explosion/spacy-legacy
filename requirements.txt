@@ -1,4 +1,7 @@
+tqdm>=4.38.0,<5.0.0
 # Development requirements
 spacy>=4.0.0.dev0
 pytest>=5.0.1
 wandb
+mypy>=0.990,<1.1.0; python_version >= "3.7"
+types-tqdm
