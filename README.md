@@ -3,7 +3,7 @@
 # spacy-legacy: Legacy functions and architectures for backwards compatibility
 
 This package includes outdated registered functions for
-[spaCy](https://spacy.io) v3.x, for example model architectures, pipeline
+[spaCy](https://spacy.io) v3+, for example model architectures, pipeline
 components and utilities. It's **installed automatically** as a dependency of
 spaCy, and allows us to provide backwards compatibility, while keeping the core
 library tidy and up to date. All of this happens under the hood, so you
