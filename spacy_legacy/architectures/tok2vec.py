@@ -279,7 +279,7 @@ def CharacterEmbed_v1(
     ragged2list = registry.get("layers", "ragged2list.v1")
     feature = intify_attr(feature)
     if feature is None:
-        raise ValueError(Errors.E911(feat=feature))
+        raise ValueError(Errors.E911.format(feat=feature))
     if include_static_vectors:
         model = chain(
             concatenate(
